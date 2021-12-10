@@ -9,7 +9,8 @@ function login(){
 	req.onreadystatechange = function () {
 	if (this.readyState==4 && this.status==200) {
 		alert("Succesfully Logged-In.\n Redirecting to home page.\n");
-			window.location = "/users";
+        let data = JSON.parse(this.responseText);
+			window.location = "/users/"+data;
 	}
 	else if(this.readyState==4 && this.status==401) {
         if (this.responseText == "Invalid password"){
@@ -38,7 +39,7 @@ function login(){
 function register(){
 	let username = document.getElementById("username").value;
 	let password = document.getElementById("password").value;
-
+    
 	const Body = {username,password}
 	
 	let req = new XMLHttpRequest();
@@ -117,7 +118,7 @@ function save(){
         alert("error")
     }
     };
-    let userid = document.getElementById("profile");
+    let userid = document.getElementById("pid");
 	req.open("POST", "/users/"+userid, true);
 	req.setRequestHeader("Content-Type", "application/json");
 	req.send(JSON.stringify({privacy: privacy}));

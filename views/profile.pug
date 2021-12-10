@@ -4,12 +4,14 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet" href="/profile.css")
         script
             include ../public/login.js
         title Profile
     body 
         include ../partials/header
-        if(session.login)
+        //- p(id = "pid", class="pid") #{info._id}
+        if(session.username == info.username)
             h2 Profile for #{info.username}
             p Private Mode:
             input(id="on",type="radio", name="select", value="on")
@@ -21,5 +23,13 @@ html(lang="en")
             button#save(type='button' onclick= 'save()') Save
             br
             h3 Order History: 
+            each order in result
+                a(href="/orders/"+order._id) #{order._id}
+                br
         else 
-            div(id = 'profile') #{info._id}    
+            h2 Profile for #{info.username}
+            h3 Order History: 
+            each order in result
+                a(href="/orders/"+order._id) #{order._id}
+                br 
+            p(id = "profile", class="profile") #{info._id}    

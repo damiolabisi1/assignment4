@@ -134,7 +134,7 @@ app.get(["/","/home"], (request,response) => {
 // });        
 
 app.get(["/users"], (request,response) => {
-    console.log(request.query);
+    // console.log(request.query);
 
     let search = request.query.username;
     if (search == null){
@@ -176,33 +176,47 @@ app.get(["/users"], (request,response) => {
 
 app.get(["/users/:userID"], (request,response) => {
     let id;
+    // console.log(request.params.userID);
     try{
         id = new mongo.ObjectId(request.params.userID)
-        console.log(id);
+        // console.log(id);
     } catch{
         response.status(404).send("Wrong Id");
         return;
     }
 
     db.collection("users").findOne({"_id": id}, function(err, data){
-        let privacy = data.privacy;
-        console.log(privacy);
+        // let privacy = data.privacy;
+        // console.log(privacy);
         let info = data;
         if (err) {
 			response.status(500).send("Error reading database.");
 			return;
 		}
-        else if(data.privacy){
-            if(request.session.username != data.username){
-                response.status(404).send("private ID");
-                return;
+        db.collection("orders").find({user: data.username}).toArray(function(error, result){
+            // let datainfo = result;
+            // console.log(result);
+
+            if (error) throw error;
+
+            if(data.privacy){
+                if(request.session.username != data.username){
+                    response.status(403).send("Private ID");
+                    return;
+                }
             }
-        }
-		else if (!data.privacy && request.session.username != data.username) {
-			response.status(200).render("order",{info});
-			return;
-		}
-		response.status(200).render("profile", {info});
+		    else if (!data.privacy && request.session.username != data.username) {
+                if (err) throw err;
+                
+                response.status(200).render("profile",{info,result});
+			    return;
+            }
+            else if(!request.session.login || request.session.username != data.username){
+                response.status(403).send("Not Authorized");
+            }
+		// response.status(200).render("profile", {result,info});
+        // return;
+    })
     })
 });
 
@@ -239,16 +253,18 @@ app.post(["/register"], (request,response) => {
         if(err) throw err;
 
         if(data == null){
-            db.collection("users").insertOne({username : username, password :password, privacy: privacy},function(err, data){ 
-                if(err) throw err;
+            db.collection("users").insertOne({username : username, password :password, privacy: privacy})
+                db.collection("users").findOne({username : username},function(err, result){  
+                    if(err) throw err;
 
-                if (data){
-                    request.session.login = true;
-                    request.session.username = username;
-                    response.status(200).send("Working");
-                }
-            });
-        }
+                    if (result){
+                        request.session.login = true;
+                        request.session.username = username;
+                        request.session.userid = result._id;
+                        response.status(200).send("Working");
+                    }
+                })
+            }
         else{
             response.status(401).send("Username taken");
             return;
@@ -287,22 +303,41 @@ app.post(["/orders"], (request,response) =>{
     });
 })
 
-// app.post(["/users/:userID"], (request,response) =>{
-//     let priv = request.body.privacy;
-//     // console.log(priv);
+app.get(["/orders/:orderID"], (request,response) =>{
+    let id;
+    try{
+        id = new mongo.ObjectId(request.params.orderID)
+        // console.log(id);
+    } catch{
+        response.status(404).send("Wrong Order Id");
+        return;
+    }
+    db.collection("orders").findOne({"_id": id}, function(err, data){
+        if (err) throw err;
 
-//     db.collection("users").updateOne({username: request.session.username},
-//         {$set: {privacy: priv}},function(err,data){
-//             if(err) throw err;
-
-//             if(!data){
-//                 response.status(401).send("Error");
-//             }
-//             else{
-//                 response.status(200).send();
-//             }
-//         })
-// })
+        // request.session.orderID = data._id
+        db.collection("users").findOne({username: data.user},function(error, result){    
+            if(error) throw error;
+            // console.log(result);
+            
+            if(result.privacy && request.session.username != result.user){
+                response.status(403).send("Not authorized")
+            }
+    
+            if(!result.privacy){
+                response.status(200).render("order",{data});
+            }
+            else if(request.session.username == data.user){
+                response.status(200).render("order",{data});
+            }
+            
+            else{
+            response.status(404).send("Error");
+            return;
+        }
+    })
+    })
+})
 
 
 app.get(["/login"], (request,response) => {
@@ -325,17 +360,18 @@ app.post(["/login"], (request,response) => {
 
     db.collection("users").findOne({username : username},function(err, data){
         if(err) throw err;
-        console.log(data);
+        // console.log(data);
 
         if(data){
             if(data.password == password){
-                console.log(data);
+                // console.log(data);
                 request.session.login = true;
                 request.session.username = data.username;
-                console.log(request.session.username);
+                // console.log(request.session.username);
                 request.session.userid = data._id;
-                console.log(request.session.userid);
-                response.redirect("/home");
+                // console.log(request.session.userid);
+                //response.redirect("/users/"+data._id);
+                response.send(data._id);
                 return;
             }
             if(data.password != password){

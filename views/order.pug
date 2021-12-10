@@ -1,1 +1,20 @@
-h1 Testing
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        script
+            include ../public/login.js
+        title Order
+    body 
+        include ../partials/header
+        h3 Order ##{data._id}
+        p Username: #{data.user}
+        p Restaurant Name: #{data.restaurantName}
+        each order in data.order
+           p #{order.name} x #{order.quantity}
+        p Subtotal: #{data.subtotal}
+        p Tax: #{data.tax}
+        p Delivery Fee: #{data.fee}
+        p Total: #{data.total}
