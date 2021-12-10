@@ -16,6 +16,7 @@ store.on('error',(error) => {console.log(error)});
 
 let mongo = require('mongodb');
 const { compile } = require('pug');
+const { info } = require('console');
 let MongoClient = mongo.MongoClient;
 app.use(express.static("public"));
 app.use(express.json())
@@ -184,19 +185,43 @@ app.get(["/users/:userID"], (request,response) => {
     }
 
     db.collection("users").findOne({"_id": id}, function(err, data){
-        console.log(data);
+        let privacy = data.privacy;
+        console.log(privacy);
         let info = data;
         if (err) {
 			response.status(500).send("Error reading database.");
 			return;
 		}
-		if (!info) {
-			response.status(404).send("Unknown ID");
+        else if(data.privacy){
+            if(request.session.username != data.username){
+                response.status(404).send("private ID");
+                return;
+            }
+        }
+		else if (!data.privacy && request.session.username != data.username) {
+			response.status(200).render("order",{info});
 			return;
 		}
 		response.status(200).render("profile", {info});
     })
 });
+
+app.post(["/users/:userID"], (request,response) =>{
+    let priv = request.body.privacy;
+    // console.log(priv);
+
+    db.collection("users").updateOne({username: request.session.username},
+        {$set: {privacy: priv}},function(err,data){
+            if(err) throw err;
+
+            if(!data){
+                response.status(401).send("Error");
+            }
+            else{
+                response.status(200).send();
+            }
+        })
+})
 
 app.get(["/register"], (request,response) => {
     response.statusCode = 200;
@@ -230,17 +255,56 @@ app.post(["/register"], (request,response) => {
         }
     })
 
-});
-    
+});    
 
 app.get(["/orderform"], (request,response) => {
-    // let data = fs.readFileSync("public/orderform.html")
 	response.statusCode = 200;
 	response.setHeader("Content-Type", "text/html");
     response.render("orderform")
-	// response.write(data);
-    // response.end();
 });
+
+
+
+app.post(["/orders"], (request,response) =>{ 
+    let info = request.body;
+    db.collection("orders").insertOne({
+        restaurantID : info.restaurantID, 
+        restaurantName : info.restaurantName, 
+        subtotal : info.subtotal, 
+        total : info.total,
+        fee : info.fee,
+        tax : info.tax,
+        order : info.order,
+        user : request.session.username
+    },function(err, data){ 
+        if(err) throw err;
+
+        if (data){
+            // request.session.login = true;
+            // request.session.username = username;
+            response.status(200).send("Working");
+        }
+    });
+})
+
+// app.post(["/users/:userID"], (request,response) =>{
+//     let priv = request.body.privacy;
+//     // console.log(priv);
+
+//     db.collection("users").updateOne({username: request.session.username},
+//         {$set: {privacy: priv}},function(err,data){
+//             if(err) throw err;
+
+//             if(!data){
+//                 response.status(401).send("Error");
+//             }
+//             else{
+//                 response.status(200).send();
+//             }
+//         })
+// })
+
+
 app.get(["/login"], (request,response) => {
     if(request.session.login){
         response.status(200).send("Logged in");

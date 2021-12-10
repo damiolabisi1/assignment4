@@ -17,5 +17,6 @@ html(lang="en")
         button#submit(type='button' onclick= 'search()') Search   
     div#result
         each users in user
-            a(href="/users/"+users._id) #{users.username} 
-            br    
+            if(!users.privacy)
+                a(href="/users/"+users._id) #{users.username}
+                br    

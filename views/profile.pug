@@ -4,17 +4,22 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        script
+            include ../public/login.js
         title Profile
     body 
         include ../partials/header
-        h2 Profile for #{info.username}
-        p Private Mode:
-        input(type="radio", name="select", value="on")
-        | On
-        br
-        input(type="radio", name="select", value="off")
-        | Off
-        br
-        button#save(type='button' onclick= 'save()') Save
-        br
-        h3 Order History: 
+        if(session.login)
+            h2 Profile for #{info.username}
+            p Private Mode:
+            input(id="on",type="radio", name="select", value="on")
+            | On
+            br
+            input(id="off",type="radio", name="select", value="off")
+            | Off
+            br
+            button#save(type='button' onclick= 'save()') Save
+            br
+            h3 Order History: 
+        else 
+            div(id = 'profile') #{info._id}    
