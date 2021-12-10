@@ -6,4 +6,15 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Profile
     body 
-        p #{info.username}
+        include ../partials/header
+        h2 Profile for #{info.username}
+        p Private Mode:
+        input(type="radio", name="select", value="on")
+        | On
+        br
+        input(type="radio", name="select", value="off")
+        | Off
+        br
+        button#save(type='button' onclick= 'save()') Save
+        br
+        h3 Order History: 
