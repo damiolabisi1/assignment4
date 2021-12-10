@@ -1,0 +1,24 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet" href="/register.css")
+        script
+            include ../public/login.js
+        title Register
+body
+    div 
+        include ../partials/header
+    hr
+    br
+    div(class='register')
+        b Username: 
+        input#username(type='textbox' size='20')
+        span(id = "regErr", class = "regErr")
+        br
+        b Password: 
+        input#password(type='textbox' size='20')
+        br 
+        button#Register(type='button' onclick= 'register()') Register

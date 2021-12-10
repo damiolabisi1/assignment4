@@ -1,0 +1,23 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        script
+            include ../public/login.js
+        title user
+    body 
+    include ../partials/header
+    br
+    p Users
+    hr
+    p Search: 
+        input#search(type="textbox")
+        button#submit(type='button' onclick= 'search()') Search
+    //- each user in users
+    //-     a(href="/users/"+user._id) #{user.username} 
+    //-     br
+    each user in users
+        a(href="/users/"+user._id) #{user.username}
+        br

@@ -1,0 +1,19 @@
+.header
+    //- script
+    //-     include ../public/orderform.js
+    a(href="/") Home
+    | |
+    a(href="/users") Users
+    | |
+    if (session.login)
+        a(href="/orderform") Order Food 
+        | |
+        a(href="/Logout") Logout
+        |
+        div
+            span Hello #{session.username}, 
+            a(href="/users/"+session.userid) Click here to view your profile  
+    else 
+        a(href="/register") Register
+        | |
+        a(href="/Login") Login
