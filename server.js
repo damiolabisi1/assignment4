@@ -312,6 +312,6 @@ MongoClient.connect('mongodb+srv://Assignment4:COMP2406@cluster0.at78s.mongodb.n
     if (err) throw err;
 
     db = client.db("a4");
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
     console.log("Server listening at http://localhost:3000");
 });
