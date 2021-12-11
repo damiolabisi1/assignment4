@@ -4,19 +4,24 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet" href="/users.css")
         script
             include ../public/login.js
         title Users
     body 
-    include ../partials/header
+        include ../partials/header
     br
-    p Users
+    div(class = 'usert')
+        h2 Users
     hr
-    p Search: 
-        input#search(type="textbox")
-        button#submit(type='button' onclick= 'search()') Search   
-    div#result
-        each users in user
-            if(!users.privacy)
-                a(href="/users/"+users._id) #{users.username}
-                br    
+    main
+        div(class='use')
+            p Search: 
+                input#search(type="textbox",class = "user")
+                button#submit(type='button' onclick= 'search()') Search   
+            div#result
+                each users in user
+                    if(!users.privacy)
+                        li
+                            a(href="/users/"+users._id) #{users.username}
+                            br    

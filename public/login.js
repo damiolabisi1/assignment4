@@ -16,6 +16,9 @@ function login(){
         if (this.responseText == "Invalid password"){
             document.getElementById("Err").innerHTML = "Incorrect Password";
         }
+        else{
+            document.getElementById("Err").innerHTML = "";
+        }
         if (this.responseText == "Invalid username"){
         document.getElementById("UserErr").innerHTML = "Incorrect Username";
         }
@@ -46,12 +49,22 @@ function register(){
 	
 	req.onreadystatechange = function () {
 	if (this.readyState==4 && this.status==200) {
+        let id = JSON.parse(this.responseText);
 		alert("Succesfully Registered.\n");
-			window.location = "/users";
+			window.location = "/users/"+id;
 	}
 	else if(this.readyState==4 && this.status==401) {
         if (this.responseText == "Username taken"){
-            document.getElementById("regErr").innerHTML = "Username taken";
+            // document.getElementById("regErr").innerHTML = "Username taken";
+            alert("Username taken");
+        }
+        else if(this.responseText == "Not valid user"){
+            // document.getElementById("regErr").innerHTML = "Enter a valid username";
+                alert("Enter a valid username");
+        }
+        else if(this.responseText == "Not valid"){
+            // document.getElementById("passErr").innerHTML = "Enter a valid password";
+            alert("Enter a valid password");
         }
     }
     };
@@ -76,7 +89,6 @@ function search(){
             let sea = JSON.parse(this.responseText);
             let list = document.getElementById("result");
             list.innerHTML = "<h1>Results</h1>";
-            console.log(sea.privacy);
             for (let i = 0; i < sea.length; i++){
                 let users = sea[i];
                 if(!users.privacy){
@@ -119,7 +131,7 @@ function save(){
     }
     };
     let userid = document.getElementById("pid");
-	req.open("POST", "/users/"+userid, true);
+	req.open("POST", "/users/"+userid.textContent, true);
 	req.setRequestHeader("Content-Type", "application/json");
 	req.send(JSON.stringify({privacy: privacy}));
 }

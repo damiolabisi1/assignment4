@@ -9,10 +9,13 @@ html(lang="en")
             include ../public/login.js
         title Register
 body
-    div 
+    div(class = "reg") 
+        h1 Register
         include ../partials/header
     hr
     br
+    br
+main    
     div(class='register')
         b Username: 
         input#username(type='textbox' size='20')
@@ -20,5 +23,8 @@ body
         br
         b Password: 
         input#password(type='textbox' size='20')
+        span(id = "passErr", class = "passErr")
         br 
         button#Register(type='button' onclick= 'register()') Register
+        p Already have an account? 
+        a(href="/Login") Login

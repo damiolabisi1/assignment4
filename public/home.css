@@ -1,0 +1,9 @@
+body{
+    background-image: url(home.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.header{
+    text-align: center;
+    font-size: larger;
+}

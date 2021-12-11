@@ -9,21 +9,24 @@ html(lang="en")
             include ../public/login.js
         title Login
 body
-    h1 Login
-    div 
+    div(class='header') 
+        h1 Login
         include ../partials/header
     hr
     br
     br
-    br
-    br
+main
     div(class='login')
         b Username: 
         input#Username(type='textbox' size='20')
+        | 
+        |
+        |
         b Password: 
         input#Password(type='textbox' size='20')
         | 
         button#Login(type='button' onclick= 'login()') Login
-    p(id = "Err", class = "Err")
-    p(id = "UserErr", class = "UserErr")
-
+        p(id = "Err", class = "Err")
+        p(id = "UserErr", class = "UserErr")
+        p Don't have an account? 
+        a(href="/register") Sign up

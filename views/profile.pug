@@ -10,7 +10,7 @@ html(lang="en")
         title Profile
     body 
         include ../partials/header
-        //- p(id = "pid", class="pid") #{info._id}
+    div(class="pic")   
         if(session.username == info.username)
             h2 Profile for #{info.username}
             p Private Mode:
@@ -32,4 +32,4 @@ html(lang="en")
             each order in result
                 a(href="/orders/"+order._id) #{order._id}
                 br 
-            p(id = "profile", class="profile") #{info._id}    
+        p(id ="pid", class="pid") #{info._id}    

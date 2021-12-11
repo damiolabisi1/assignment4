@@ -1,0 +1,30 @@
+main {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body{
+    background-image: url(users.png);
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-position: 50% 50%;
+}
+.user{
+    background: #fff;
+    border-radius: 10px;
+    display: inline-block;
+    height: auto;
+    margin: 1rem;
+    position: relative;
+    width: 300px;
+    /* box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); */
+    text-align: center;
+}
+.header{
+    text-align: center;
+    font-size: larger;
+}
+.usert{
+    text-align: center;
+}

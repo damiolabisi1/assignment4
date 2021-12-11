@@ -48,91 +48,6 @@ app.get(["/","/home"], (request,response) => {
 	response.render("home")
 });
 
-// app.get(["/users"], (request,response) => {
-//     // db.collection("users").distinct("username", function(err, data){
-//         // if(err) throw err;
-//         // let user = data;
-//         console.log(request.query);
-//         // response.format({
-//             // "application/json": function () {
-//     //     response.status(200).render("users",{user});
-//     // })
-//         //let search = "";
-//         let search = request.query.username;
-//         console.log(search);
-//         if (search =! null){
-//             console.log("here "+ search); 
-//             const d = db.collection("users").find({
-//                 "username": {
-//                     $regex: `${search}`, 
-//                     "$options": "i"
-//                 }
-//             })
-//             d.toArray(function(err, data){
-//                 if (err){
-//                     throw err;
-//                 }
-//                 // else if (data.length == 0){
-//                 //     response.status(401).send("Username");
-//                 // }
-//                 else{
-// 		        response.status(200).json(data).render("users");
-//                 response.end();
-//                 }
-// 	            // response.end();
-//             })
-//         }
-    
-//         // else{
-//         //     response.status(401).send("Username");
-//         //     return;
-//         // }
-//         // else if (search == null){
-//         //     response.status(200).render("users",{user});
-//         //     return;
-//         // }
-//     // },
-//     //     "text/html": function () {
-//         // else{
-//         //     response.status(200).render("users",{user});
-//         //     return;
-//         // }
-//         // },
-//         // "default": function () {
-// 			// response.status(406).send("Not acceptable");
-// 		// }
-//     // })
-//     // })
-// });
-
-// app.get(["/users"], (request,response) => {
-//     db.collection("users").distinct("username", function(err, data){
-//     // db.collection("users").find(),function(err, data){
-//         if(err) throw err;
-//         let user = data;
-//         response.status(200).render("users",{user});
-//     })
-
-// });
-
-// app.get(["/user"], (request,response) => {
-//     let search = "";
-//     search = request.query.username;
-//     console.log(search);
-// const d = db.collection("users").find({
-//     "username": {
-//         $regex: search, 
-//         "$options": "i"
-//     }
-// })
-// d.toArray(function(err, data){
-//     if (err) throw err;
-// 		response.statusCode = 200;
-// 		response.json(data);
-// 		response.end();
-//     })
-// });        
-
 app.get(["/users"], (request,response) => {
     // console.log(request.query);
 
@@ -213,9 +128,10 @@ app.get(["/users/:userID"], (request,response) => {
             }
             else if(!request.session.login || request.session.username != data.username){
                 response.status(403).send("Not Authorized");
+                return
             }
-		// response.status(200).render("profile", {result,info});
-        // return;
+		response.status(200).render("profile", {result,info});
+        return;
     })
     })
 });
@@ -249,29 +165,57 @@ app.post(["/register"], (request,response) => {
     let privacy = false;
     console.log(username);
 
-    db.collection("users").findOne({username : username},function(err, data){  
-        if(err) throw err;
+    if(request.body.username == ""){
+        response.status(401).send("Not valid user");
+        // return;
+    }
+    else if(request.body.password == ""){
+        response.status(401).send("Not valid");
+        // return;
+    }
+    
+    else{
+        db.collection("users").findOne({username : username},function(err, data){  
+            if(err) throw err;
 
-        if(data == null){
-            db.collection("users").insertOne({username : username, password :password, privacy: privacy})
-                db.collection("users").findOne({username : username},function(err, result){  
-                    if(err) throw err;
+            console.log(data);
+            if(data == null){
+                db.collection("users").insertOne({username : username, password :password, privacy: privacy})
+                    db.collection("users").findOne({username : username},function(err, result){  
+                        if(err) throw err;
 
-                    if (result){
                         request.session.login = true;
                         request.session.username = username;
                         request.session.userid = result._id;
-                        response.status(200).send("Working");
-                    }
-                })
-            }
-        else{
-            response.status(401).send("Username taken");
-            return;
+                        response.status(200).send(result._id);
+                    })
+                }
+            else{
+                response.status(401).send("Username taken");
+                return;
         }
+        
     })
+}
 
 });    
+
+// if(data){
+//     if(data.password == password){
+//         request.session.login = true;
+//         request.session.username = data.username;
+//         request.session.userid = data._id;
+//         response.send(data._id);
+//         return;
+//     }
+//     if(data.password != password){
+//         response.status(401).send("Invalid password");
+//     }
+// }
+// else{
+//     response.status(401).send("Invalid username");
+//     return;
+// }
 
 app.get(["/orderform"], (request,response) => {
 	response.statusCode = 200;
@@ -320,15 +264,20 @@ app.get(["/orders/:orderID"], (request,response) =>{
             if(error) throw error;
             // console.log(result);
             
-            if(result.privacy && request.session.username != result.user){
+            if(result.privacy){ 
+                if(request.session.username != result.user){
                 response.status(403).send("Not authorized")
+                return;
+                }
             }
     
             if(!result.privacy){
                 response.status(200).render("order",{data});
+                return;
             }
             else if(request.session.username == data.user){
                 response.status(200).render("order",{data});
+                return;
             }
             
             else{
@@ -364,13 +313,9 @@ app.post(["/login"], (request,response) => {
 
         if(data){
             if(data.password == password){
-                // console.log(data);
                 request.session.login = true;
                 request.session.username = data.username;
-                // console.log(request.session.username);
                 request.session.userid = data._id;
-                // console.log(request.session.userid);
-                //response.redirect("/users/"+data._id);
                 response.send(data._id);
                 return;
             }

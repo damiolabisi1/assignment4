@@ -1,0 +1,10 @@
+body{
+    background-image: url(order.png);
+    background-repeat: no-repeat;
+    background-size:cover;
+    background-position: 40% 60%;
+    color: rgb(241, 238, 238);
+}
+.header{
+    font-size: larger;
+}
