@@ -1,3 +1,4 @@
+//Handles the login button 
 function login(){
 	let Username = document.getElementById("Username").value;
 	let Password = document.getElementById("Password").value;
@@ -38,7 +39,7 @@ function login(){
 	req.send(JSON.stringify(Body));
 }
 
-
+//Handles the register button
 function register(){
 	let username = document.getElementById("username").value;
 	let password = document.getElementById("password").value;
@@ -55,15 +56,12 @@ function register(){
 	}
 	else if(this.readyState==4 && this.status==401) {
         if (this.responseText == "Username taken"){
-            // document.getElementById("regErr").innerHTML = "Username taken";
             alert("Username taken");
         }
         else if(this.responseText == "Not valid user"){
-            // document.getElementById("regErr").innerHTML = "Enter a valid username";
-                alert("Enter a valid username");
+            alert("Enter a valid username");
         }
         else if(this.responseText == "Not valid"){
-            // document.getElementById("passErr").innerHTML = "Enter a valid password";
             alert("Enter a valid password");
         }
     }
@@ -73,9 +71,9 @@ function register(){
 	req.send(JSON.stringify(Body));
 }
 
+//Handles the search button, returns a list of names containing letters searched for
 function search(){
     let search = document.getElementById("search").value;
-    // console.log(search)
 
     let req = new XMLHttpRequest();
 	let params = "/?username=" + search;
@@ -108,6 +106,8 @@ function search(){
         
         };
 }
+
+//Handles the save button, sends the users privacy option to client 
 function save(){
     let selected = document.getElementById("on").checked;
     let privacy;
@@ -117,14 +117,12 @@ function save(){
     else{
         privacy = false;
     }
-    console.log(privacy);
 
     let req = new XMLHttpRequest();
 	
 	req.onreadystatechange = function () {
 	if (this.readyState==4 && this.status==200) {
 		alert("Success");
-			// window.location = "/users";
 	}
 	else if(this.readyState==4 && this.status==401) {
         alert("error")
