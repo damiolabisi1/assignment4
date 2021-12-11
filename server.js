@@ -308,7 +308,7 @@ app.get(["/logout"], (request,response) => {
 });
 
 let db;
-MongoClient.connect('mongodb://localhost/a4',(err, client) => {
+MongoClient.connect('mongodb+srv://Assignment4:COMP2406@cluster0.at78s.mongodb.net/a4?retryWrites=true&w=majority',(err, client) => {
     if (err) throw err;
 
     db = client.db("a4");
